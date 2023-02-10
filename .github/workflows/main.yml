@@ -2,7 +2,7 @@ name: main
 
 on:
   workflow_dispatch:
-    push:
+   push:
      branches: [ main ]
 #   pull_request:
 #     branches: [ main ]
@@ -11,27 +11,19 @@ on:
 jobs:
   LBJobDockerCLI:
     runs-on: ubuntu-latest
-    
-    variables:
-      URL: jdbc:mysql://localhost:3306/onboarding
-      USERNAME: root
-      PASSWORD: Bestfrnd24!!
-      DRIVER: com.mysql.cjdbc.Driver   
-      SCHEMA: onboarding
-    
     steps: 
     - uses: actions/checkout@v2
     
     - name: Run 'Liquibase status' in a Docker Container	    
       uses: docker://liquibase/liquibase:latest
       with:
-        args: --url=$URL --changeLogFile=master.xml --username=$USERNAME --password=$PASSWORD --driver=$DRIVER--defaultSchemaName=$SCHEMA status
+        args: --url=${{ secrets.URL }} --changeLogFile=master.xml --username=${{ secrets.USERNAME }} --password=${{ secrets.PASSWORD }} --driver=${{ secrets.DRIVER}} -- defaultSchemaName=${{ secrets.SCHEMA }} status
  
     
     - name: Run 'Liquibase update' in a Docker Container
       uses: docker://liquibase/liquibase:latest
       with:
-        args: --url=$URL --changeLogFile=master.xml --username=$USERNAME --password=$PASSWORD --driver=$DRIVER--defaultSchemaName=$SCHEMA  --logLevel=debug update
+        args: --url=${{ secrets.URL }} --changeLogFile=master.xml --username=${{ secrets.USERNAME }} --password=${{ secrets.PASSWORD }} --driver=${{ secrets.DRIVER}} -- defaultSchemaName=${{ secrets.SCHEMA }} --logLevel=debug update
  
 
         
