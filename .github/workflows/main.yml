@@ -1,16 +1,30 @@
-on: [push]
+name: main
 
+on:
+  workflow_dispatch:
+   push:
+     branches: [ main ]
+#   pull_request:
+#     branches: [ main ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  test-liquibase-action:
+  LBJobDockerCLI:
     runs-on: ubuntu-latest
-    name: Test Liquibase Action
-    steps:
-      - uses: actions/checkout@v2
-      - uses: liquibase/liquibase-github-action@v2
-        with:
-          operation: 'update'
-          classpath: 'sql'
-          changeLogFile: 'master.xml'
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          url: ${{ secrets.URL }}
+    steps: 
+    - uses: actions/checkout@v2
+    
+    - name: Run 'Liquibase status' in a Docker Container	    
+      uses: docker://liquibase/liquibase:latest
+      with:
+        args: --url=${{ secrets.URL }} --changeLogFile=master.xml --username=${{ secrets.USERNAME }} --password=${{ secrets.PASSWORD }} --driver=${{ secrets.DRIVER}} -- defaultSchemaName=${{ secrets.SCHEMA }} status
+ 
+    
+    - name: Run 'Liquibase update' in a Docker Container
+      uses: docker://liquibase/liquibase:latest
+      with:
+        args: --url=${{ secrets.URL }} --changeLogFile=master.xml --username=${{ secrets.USERNAME }} --password=${{ secrets.PASSWORD }} --driver=${{ secrets.DRIVER}} -- defaultSchemaName=${{ secrets.SCHEMA }} --logLevel=debug update
+ 
+
+        
+        
