@@ -12,14 +12,7 @@ jobs:
   LBJobDockerCLI:
     runs-on: ubuntu-latest
     steps: 
-    - uses: actions/checkout@v2
-    
-    - name: Run 'Liquibase status' in a Docker Container	    
-      uses: docker://liquibase/liquibase:latest
-      with:
-        args: --url=${{ secrets.URL }} --changeLogFile=master.xml --username=${{ secrets.USERNAME }} --password=${{ secrets.PASSWORD }} --driver=${{ secrets.DRIVER}} -- defaultSchemaName=${{ secrets.SCHEMA }} status
- 
-    
+    - uses: actions/checkout@v2    
     - name: Run 'Liquibase update' in a Docker Container
       uses: docker://liquibase/liquibase:latest
       with:
