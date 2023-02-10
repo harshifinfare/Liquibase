@@ -17,12 +17,12 @@ jobs:
     - name: Run 'Liquibase status' in a Docker Container	    
       uses: docker://liquibase/liquibase:latest
       with:
-        args: --url=${{ secrets.URL }} --changeLogFile=/master.xml --username=${{ secrets.USERNAME }}--password=${{ secrets.PASSWORD }} --driver=${{ secrets.driver}} 
+        args: --url=${{ secrets.URL }} --changeLogFile=master.xml --username=${{ secrets.USERNAME }}--password=${{ secrets.PASSWORD }} --driver=${{ secrets.driver}} 
     
     - name: Run 'Liquibase update' in a Docker Container
       uses: docker://liquibase/liquibase:latest
       with:
-        args: --url=${{ secrets.URL }} --changeLogFile=/master.xml --username=${{ secrets.USERNAME }}--password=${{ secrets.PASSWORD }} --driver=${{ secrets.driver}}
+        args: --url=${{ secrets.URL }} --changeLogFile=master.xml --username=${{ secrets.USERNAME }}--password=${{ secrets.PASSWORD }} --driver=${{ secrets.driver}}
 
         
         
