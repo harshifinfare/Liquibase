@@ -1,0 +1,50 @@
+import os, sys
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('--C:\Users\harshi\Documents\mysql', type=str, default='/', help='This is the root path for the directory.')
+parser.add_argument('--harshi', type=str, default='/', help='This is to change author ID for changeset')
+args = parser.parse_args()
+
+# ROOT_DIRECTORY = r'C:\Users\harshi\Documents\mysql'
+# AUTHOR = 'harshi'
+
+ROOT_DIRECTORY = args.ROOT_DIRECTORY
+AUTHOR = args.AUTHOR
+LIQUIBASE_CHANGELOG_CONFIG = '-- liquibase formatted sql\n\n'
+
+def createSchemaSQL(filePath, shemaName,author,tag='Alpha'):
+    SCHEMA_CHANGELOG_TEMPLATE = '-- liquibase formatted sql\n'\
+                    '-- changeset AUTHOR:CHANGESETID\n'\
+                    'CREATE SCHEMA IF NOT EXISTS SCHEMA_NAME DEFAULT CHARACTER SET utf8 COLLATE utf8_bin\n'\
+                    '-- rollback DROP SCHEMA IF EXISTS SCHEMA_NAME;'
+    with open(os.path.join(filePath,tag+'_'+shemaName+'.sql'), 'w+') as fWriter:
+        fWriter.write(SCHEMA_CHANGELOG_TEMPLATE.replace('SCHEMA_NAME',shemaName).replace('AUTHOR',author).replace('CHANGESETID',shemaName))
+    
+def DDL2Liquibase_tableCreation(filePath, schemaName, tableName, author, changsetID):
+    with open(filePath, 'r') as fReader:
+        original_ddl = fReader.read()
+    rollback_comand = '\n-- rollback DROP TABLE '+schemaName+'.'+tableName
+    changeset_command = '-- changeset '+author+':'+changsetID+'\n'
+    with open(filePath, 'w+') as fWriter:
+        fWriter.write(LIQUIBASE_CHANGELOG_CONFIG+
+                      changeset_command+
+                      original_ddl.replace(tableName+'\n(', schemaName+'.'+tableName+'\n(')+rollback_comand)
+    return (True, schemaName+'/'+tableName+'  is finished!')
+def main():
+
+    schema_list = os.listdir(ROOT_DIRECTORY)
+    print('Detected schemas: ', schema_list)
+    for schema_name in schema_list:
+        print('>>'+schema_name)
+        createSchemaSQL(os.path.join(ROOT_DIRECTORY,schema_name), schema_name, AUTHOR)
+        table_creation_list = os.listdir(os.path.join(ROOT_DIRECTORY, schema_name))
+        for table_name in table_creation_list:
+            if('Alpha_' in table_name):
+                continue
+            DDL2Liquibase_tableCreation(os.path.join(ROOT_DIRECTORY,schema_name, table_name), 
+                                        schema_name, table_name.replace('.sql', ''), AUTHOR,
+                                        schema_name+'-'+table_name.replace('.sql', ''))
+        print('------'+table_name)
+
+if __name__ == "__main__":
+   main()
