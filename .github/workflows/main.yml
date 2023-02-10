@@ -16,7 +16,7 @@ jobs:
     - name: Run 'Liquibase update' in a Docker Container
       uses: docker://liquibase/liquibase:latest
       with:
-        args: --url=${{ secrets.URL }} --changeLogFile=master.xml --username=${{ secrets.USERNAME }} --password=${{ secrets.PASSWORD }} --driver=${{ secrets.DRIVER}} -- liquibaseSchemaName=${{ secrets.SCHEMA }} --logLevel=debug update
+        args: --url=${{ secrets.URL }} --changeLogFile=master.xml --username=${{ secrets.USERNAME }} --password=${{ secrets.PASSWORD }} --driver=${{ secrets.DRIVER}} --logLevel=debug update
  
 
         
